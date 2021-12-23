@@ -183,6 +183,11 @@ Status HadoopFileSystem::Connect(StringPiece fname, hdfsFS* fs) {
     nn = "default";
   } else if (scheme == "har") {
     TF_RETURN_IF_ERROR(SplitArchiveNameAndPath(path, nn));
+  } else if (scheme == "dfs") {
+    size_t length = path.size();
+    StringPiece dfsPath = fname;
+    dfsPath.remove_suffix(length);
+    nn = string(dfsPath);
   } else {
     if (nn.empty()) {
       nn = "default";
@@ -587,5 +592,6 @@ Status HadoopFileSystem::Stat(const string& fname, TransactionToken* token,
 REGISTER_LEGACY_FILE_SYSTEM("hdfs", HadoopFileSystem);
 REGISTER_LEGACY_FILE_SYSTEM("viewfs", HadoopFileSystem);
 REGISTER_LEGACY_FILE_SYSTEM("har", HadoopFileSystem);
+REGISTER_LEGACY_FILE_SYSTEM("dfs", HadoopFileSystem);
 
 }  // namespace tensorflow
